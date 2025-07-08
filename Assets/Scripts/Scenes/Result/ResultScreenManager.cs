@@ -9,6 +9,7 @@ using System.Linq;
 using System;
 using SkiaSharp;
 using System.Collections.Generic;
+using MajdataPlay.Drawing;
 using Random = UnityEngine.Random;
 using MajdataPlay.Game;
 using MajdataPlay.List;
