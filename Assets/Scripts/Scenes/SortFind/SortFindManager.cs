@@ -12,7 +12,7 @@ namespace MajdataPlay.SortFind
     {
         
         public TextMeshProUGUI[] Sorts;
-        public InputField SearchBar;
+        public TMP_InputField SearchBar;
 
         public Color selectedColor;
         public SortType sortType;
