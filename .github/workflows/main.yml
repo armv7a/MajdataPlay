@@ -28,7 +28,7 @@ jobs:
           fetch-depth: 0
 
       - name: Cache libraries
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: Library
           key: Library-${{ env.TARGET_PLATFORM }}
@@ -42,6 +42,7 @@ jobs:
           buildName: MajdataPlay
           buildsPath: ${{ env.CONFIGURATION }}
           androidArchitecture: ARM64
+          scriptingBackend: IL2CPP
           buildMethod: MajdataPlay.Misc.Editor.CustomBuild.BuildRelease
 
       - name: List files in build directory
