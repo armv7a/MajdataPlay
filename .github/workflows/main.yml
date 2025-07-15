@@ -16,7 +16,7 @@ jobs:
       COMMIT_HASH_FULL: ${{ github.sha }}
       OUTPUT_NAME: MajdataPlay-${{ matrix.configuration }}
       CONFIGURATION: ${{ matrix.configuration }}
-      TARGET_PLATFORM: "StandaloneWindows64"
+      TARGET_PLATFORM: "Android"
       
     steps:
       - name: Get commit hash
