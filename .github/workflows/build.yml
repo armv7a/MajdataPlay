@@ -29,7 +29,7 @@ jobs:
         UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
 
     - name: Build Android arm64 APK
-      uses: game-ci/unity-build@v4
+      uses: game-ci/unity-builder@v4
       with:
         targetPlatform: Android
         buildMethod: BuildScript.PerformBuild
