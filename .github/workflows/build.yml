@@ -38,7 +38,7 @@ jobs:
         with:
           targetPlatform: Android
           buildMethod: MajdataPlay.Editor.CustomBuild.BuildRelease
-          buildArguments: -buildTarget Android -architecture arm64
+          args: -buildTarget Android -architecture arm64 -customBuildPath build/Android/MajdataPlay.apk -customBuildName MajdataPlay.apk
           outputPath: build/Android
           buildName: MajdataPlay.apk
 
