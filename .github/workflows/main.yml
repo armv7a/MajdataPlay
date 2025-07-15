@@ -28,7 +28,7 @@ jobs:
           fetch-depth: 0
 
       - name: Cache libraries
-        uses: actions/cache@v4
+        uses: actions/cache@v3
         with:
           path: Library
           key: Library-${{ env.TARGET_PLATFORM }}
@@ -41,12 +41,23 @@ jobs:
           versioning: Semantic
           buildName: MajdataPlay
           buildsPath: ${{ env.CONFIGURATION }}
-          androidArchitecture: ARM64
-          scriptingBackend: IL2CPP
-          buildMethod: MajdataPlay.Misc.Editor.CustomBuild.BuildRelease
+          androidArchitecture: ARM64  # 确保使用ARM64架构
+          # 新增以下参数确保64位构建
+          customParameters: -buildTarget Android -architecture ARM64
+          # 可选：显式禁用32位构建
+          androidAppBundle: false
+          androidSplitApks: false
 
-      - name: List files in build directory
-        run: ls -R ${{ env.CONFIGURATION }}
+      - name: Verify architecture
+        run: |
+          apk_path=$(find ${{ env.CONFIGURATION }}/android -name "*.apk")
+          if [ -z "$apk_path" ]; then
+            echo "::error::APK file not found!"
+            exit 1
+          fi
+          echo "Checking APK architecture for: $apk_path"
+          unzip -l "$apk_path" | grep lib/arm64-v8a && echo "✅ ARM64 detected" || echo "❌ No ARM64 libraries found"
+          unzip -l "$apk_path" | grep lib/armeabi-v7a && echo "⚠️  WARNING: ARM32 libraries detected" || true
 
       - name: Upload build
         uses: actions/upload-artifact@v4
