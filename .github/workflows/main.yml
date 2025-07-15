@@ -42,6 +42,7 @@ jobs:
           buildName: MajdataPlay
           buildsPath: ${{ env.CONFIGURATION }}
           androidArchitecture: ARM64
+          buildMethod: MajdataPlay.Misc.Editor.CustomBuild.BuildRelease
 
       - name: List files in build directory
         run: ls -R ${{ env.CONFIGURATION }}
