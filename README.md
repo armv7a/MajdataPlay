@@ -1,4 +1,4 @@
-# MajdataPlay
+# MajdataPlay 
 
 ![license GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)
 ![GitHub Release](https://img.shields.io/github/v/release/LingFeng-bbben/MajdataPlay?include_prereleases)
