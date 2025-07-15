@@ -8,22 +8,18 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        configuration: [Debug, Release]
     env:
       COMMIT_HASH_FULL: ${{ github.sha }}
-      OUTPUT_NAME: MajdataPlay-${{ matrix.configuration }}
-      CONFIGURATION: ${{ matrix.configuration }}
-      TARGET_PLATFORM: "Android"
+      OUTPUT_NAME: MajdataPlay-Release
+      CONFIGURATION: Release
+      TARGET_PLATFORM: Android
       
     steps:
       - name: Get commit hash
         run: echo "COMMIT_HASH=$(echo ${{ env.COMMIT_HASH_FULL }} | cut -c1-7)" >> $GITHUB_ENV
         
       - name: Setup output filename
-        run: echo "OUTPUT_NAME=MajdataPlay-${{ env.COMMIT_HASH }}-${{ matrix.configuration }}" >> $GITHUB_ENV
+        run: echo "OUTPUT_NAME=MajdataPlay-${{ env.COMMIT_HASH }}-Release" >> $GITHUB_ENV
         
       - name: Checkout the repository
         uses: actions/checkout@v4
@@ -38,24 +34,14 @@ jobs:
           key: Library-${{ env.TARGET_PLATFORM }}
           restore-keys: Library-${{ env.TARGET_PLATFORM }}
           
-      - if: env.CONFIGURATION == 'Debug'
-        name: Debug build
+      - name: Release build
         uses: game-ci/unity-builder@v4.3.0
         with:
           targetPlatform: ${{ env.TARGET_PLATFORM }}
           versioning: Semantic
           buildName: MajdataPlay
           buildsPath: ${{ env.CONFIGURATION }}
-          buildMethod: MajdataPlay.Misc.Editor.CustomBuild.BuildDebug
-
-      - if: env.CONFIGURATION == 'Release'
-        name: Release build
-        uses: game-ci/unity-builder@v4.3.0
-        with:
-          targetPlatform: ${{ env.TARGET_PLATFORM }}
-          versioning: Semantic
-          buildName: MajdataPlay
-          buildsPath: ${{ env.CONFIGURATION }}
+          androidArchitecture: ARM64
 
       - name: List files in build directory
         run: ls -R ${{ env.CONFIGURATION }}
