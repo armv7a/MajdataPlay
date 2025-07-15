@@ -37,11 +37,11 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: Android
-          buildMethod: BuildScript.PerformBuild
-          buildArguments: -architecture arm64
+          buildMethod: MajdataPlay.Editor.CustomBuild.BuildRelease
+          buildArguments: -customBuildPath build/Android/MajdataPlay.apk -buildTarget Android -architecture arm64
 
       # Output
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v3
         with:
           name: Android-arm64-APK
-          path: build/Android/*.apk
+          path: build/Android/MajdataPlay.apk
