@@ -36,7 +36,7 @@ namespace MajdataPlay
         public static event Action? OnApplicationQuit;
         public static LibVLC? VLCLibrary { get; private set; }
         public static ConcurrentQueue<Action> ExecutionQueue { get; } = IOManager.ExecutionQueue;
-        internal static HardwareEncoder HWEncoder { get; } = HardwareEncoder.None;
+        internal static HardwareEncoder HWEncoder { get; private set; } = HardwareEncoder.None;
         internal static RunningMode Mode { get; set; } = RunningMode.Play;
 #if UNITY_EDITOR
         public static bool IsEditor { get; } = true;
@@ -48,23 +48,155 @@ namespace MajdataPlay
         public static string AssetsPath { get; } = Application.streamingAssetsPath;
         public static string CachePath { get; } = Path.Combine(RootPath, "Cache");
 #else
-        public static string RootPath { get; } = Application.persistentDataPath;
-        public static string AssetsPath { get; } = Path.Combine(Application.persistentDataPath, "ExtStreamingAssets/");
-        public static string CachePath { get; } = Application.temporaryCachePath;
+        private static string? _rootPath;
+        private static string? _assetsPath;
+        private static string? _cachePath;
+        private static string? _chartPath;
+        private static string? _settingPath;
+        private static string? _skinPath;
+        private static string? _logsPath;
+        private static string? _langPath;
+        private static string? _scoreDBPath;
+        private static string? _logPath;
+        private static string? _recordOutputsPath;
+
+        public static string RootPath
+        {
+            get
+            {
+                if (_rootPath == null)
+                {
+                    _rootPath = Application.persistentDataPath;
+                }
+                return _rootPath;
+            }
+        }
+
+        public static string AssetsPath
+        {
+            get
+            {
+                if (_assetsPath == null)
+                {
+                    _assetsPath = Path.Combine(Application.persistentDataPath, "ExtStreamingAssets/");
+                }
+                return _assetsPath;
+            }
+        }
+
+        public static string CachePath
+        {
+            get
+            {
+                if (_cachePath == null)
+                {
+                    _cachePath = Application.temporaryCachePath;
+                }
+                return _cachePath;
+            }
+        }
+
+        public static string ChartPath
+        {
+            get
+            {
+                if (_chartPath == null)
+                {
+                    _chartPath = Path.Combine(RootPath, "MaiCharts");
+                }
+                return _chartPath;
+            }
+        }
+
+        public static string SettingPath
+        {
+            get
+            {
+                if (_settingPath == null)
+                {
+                    _settingPath = Path.Combine(RootPath, "settings.json");
+                }
+                return _settingPath;
+            }
+        }
+
+        public static string SkinPath
+        {
+            get
+            {
+                if (_skinPath == null)
+                {
+                    _skinPath = Path.Combine(RootPath, "Skins");
+                }
+                return _skinPath;
+            }
+        }
+
+        public static string LogsPath
+        {
+            get
+            {
+                if (_logsPath == null)
+                {
+                    _logsPath = Path.Combine(RootPath, "Logs");
+                }
+                return _logsPath;
+            }
+        }
+
+        public static string LangPath
+        {
+            get
+            {
+                if (_langPath == null)
+                {
+                    _langPath = Path.Combine(AssetsPath, "Langs");
+                }
+                return _langPath;
+            }
+        }
+
+        public static string ScoreDBPath
+        {
+            get
+            {
+                if (_scoreDBPath == null)
+                {
+                    _scoreDBPath = Path.Combine(RootPath, "MajDatabase.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db");
+                }
+                return _scoreDBPath;
+            }
+        }
+
+        public static string LogPath
+        {
+            get
+            {
+                if (_logPath == null)
+                {
+                    _logPath = Path.Combine(LogsPath, "MajPlayRuntime.log");
+                }
+                return _logPath;
+            }
+        }
+
+        public static string RecordOutputsPath
+        {
+            get
+            {
+                if (_recordOutputsPath == null)
+                {
+                    _recordOutputsPath = Path.Combine(RootPath, "RecordOutputs");
+                }
+                return _recordOutputsPath;
+            }
+        }
 #endif
 
-        public static string ChartPath { get; } = Path.Combine(RootPath, "MaiCharts");
-        public static string SettingPath { get; } = Path.Combine(RootPath, "settings.json");
-        public static string SkinPath { get; } = Path.Combine(RootPath, "Skins");
-        public static string LogsPath { get; } = Path.Combine(RootPath, $"Logs");
-        public static string LangPath { get; } = Path.Combine(AssetsPath, "Langs");
-        public static string ScoreDBPath { get; } = Path.Combine(RootPath, "MajDatabase.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db");
-        public static string LogPath { get; } = Path.Combine(LogsPath, $"MajPlayRuntime.log");
-        public static string RecordOutputsPath { get; } = Path.Combine(RootPath, "RecordOutputs");
-        public static Sprite EmptySongCover { get; }
-        public static Material BreakMaterial { get; }
-        public static Material DefaultMaterial { get; }
-        public static Material HoldShineMaterial { get; }
+        public static Sprite EmptySongCover { get; private set; }
+        public static Material BreakMaterial { get; private set; }
+        public static Material DefaultMaterial { get; private set; }
+        public static Material HoldShineMaterial { get; private set; }
         public static Thread MainThread { get; } = Thread.CurrentThread;
         public static Process GameProcess { get; } = Process.GetCurrentProcess();
         public static HttpClient SharedHttpClient { get; } = new HttpClient(new HttpClientHandler()
@@ -81,7 +213,7 @@ namespace MajdataPlay
                 UserAgent = { new ProductInfoHeaderValue("MajPlay", MajInstances.GameVersion.ToString()) },
             }
         };
-        public static GameSetting UserSettings { get; }
+        public static GameSetting UserSettings { get; private set; }
         public static CancellationToken GlobalCT
         {
             get
@@ -111,10 +243,29 @@ namespace MajdataPlay
         static MajEnv()
         {
             ChangedSynchronizationContext();
+            UserSettings = new GameSetting();
+        }
+        internal static void Init()
+        {
+#if UNITY_STANDALONE_WIN
+            MajDebug.Log("[VLC] init");
+            if (VLCLibrary != null)
+            {
+                VLCLibrary.Dispose();
+            }
+            Core.Initialize(Path.Combine(Application.dataPath, "Plugins")); // Load VLC dlls
+            VLCLibrary = new LibVLC(enableDebugLogs: true, "--no-audio");
+#else
+            VLCLibrary = null;
+#endif
             CheckNoteSkinFolder();
-
             var netCachePath = Path.Combine(CachePath, "Net");
             var runtimeCachePath = Path.Combine(CachePath, "Runtime");
+            CreateDirectoryIfNotExists(CachePath);
+            CreateDirectoryIfNotExists(runtimeCachePath);
+            CreateDirectoryIfNotExists(netCachePath);
+            CreateDirectoryIfNotExists(ChartPath);
+            CreateDirectoryIfNotExists(RecordOutputsPath);
 
             if (File.Exists(SettingPath))
             {
@@ -126,7 +277,7 @@ namespace MajdataPlay
                     UserSettings = new();
                     MajDebug.LogError("Failed to read setting from file");
                     var bakFileName = $"{SettingPath}.bak";
-                    while(File.Exists(bakFileName))
+                    while (File.Exists(bakFileName))
                     {
                         bakFileName = $"{bakFileName}.bak";
                     }
@@ -139,14 +290,11 @@ namespace MajdataPlay
                 else
                 {
                     UserSettings = setting;
-                    //Reset Mod option after reboot
-                    UserSettings.Mod = new ModOptions();
+                    UserSettings.Mod = new ModOptions(); // Reset Mod option after reboot
                 }
             }
             else
             {
-                UserSettings = new GameSetting();
-
                 var json = Serializer.Json.Serialize(UserSettings, UserJsonReaderOption);
                 File.WriteAllText(SettingPath, json);
             }
@@ -158,40 +306,20 @@ namespace MajdataPlay
             UserSettings.Display.InnerJudgeDistance = UserSettings.Display.InnerJudgeDistance.Clamp(0, 1);
             UserSettings.Display.OuterJudgeDistance = UserSettings.Display.OuterJudgeDistance.Clamp(0, 1);
 
-            CreateDirectoryIfNotExists(CachePath);
-            CreateDirectoryIfNotExists(runtimeCachePath);
-            CreateDirectoryIfNotExists(netCachePath);
-            CreateDirectoryIfNotExists(ChartPath);
-            CreateDirectoryIfNotExists(RecordOutputsPath);
             SharedHttpClient.Timeout = TimeSpan.FromMilliseconds(HTTP_TIMEOUT_MS);
             MainThread.Priority = THREAD_PRIORITY_MAIN;
 #if !UNITY_EDITOR
-            if(MainThread.Name is not null)
+            if (MainThread.Name is not null)
             {
                 MainThread.Name = "MajdataPlay MainThread";
             }
-#endif
-        }
-        internal static void Init()
-        {
-
-#if UNITY_STANDALONE_WIN
-            MajDebug.Log("[VLC] init");
-            if (VLCLibrary != null)
-            {
-                VLCLibrary.Dispose();
-            }
-            Core.Initialize(Path.Combine(Application.dataPath, "Plugins")); //Load VLC dlls
-            VLCLibrary = new LibVLC(enableDebugLogs: true, "--no-audio"); // we dont need it to produce sound here
-#else
-            VLCLibrary = null;
 #endif
         }
         internal static void OnApplicationQuitRequested()
         {
             SharedHttpClient.CancelPendingRequests();
             SharedHttpClient.Dispose();
-            if( VLCLibrary != null )
+            if (VLCLibrary != null)
             {
                 VLCLibrary.Dispose();
             }
