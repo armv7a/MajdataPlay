@@ -1,0 +1,18 @@
+<linker>
+  <!-- Preserve reflection usage in Reflection.cs -->
+  <assembly fullname="Assembly-CSharp">
+    <namespace fullname="MajdataPlay.Utils" preserve="all"/>
+  </assembly>
+
+  <!-- Preserve System.Reflection for il2cpp compatibility -->
+  <assembly fullname="mscorlib">
+    <namespace fullname="System.Reflection" preserve="all"/>
+  </assembly>
+
+  <!-- Preserve Unity Engine types that might be accessed via reflection -->
+  <assembly fullname="UnityEngine">
+    <type fullname="UnityEngine.MonoBehaviour" preserve="all"/>
+    <type fullname="UnityEngine.Component" preserve="all"/>
+    <type fullname="UnityEngine.GameObject" preserve="all"/>
+  </assembly>
+</linker>

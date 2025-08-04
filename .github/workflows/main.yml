@@ -33,13 +33,6 @@ jobs:
         with:
           submodules: true
           fetch-depth: 0
-
-      - name: Cache libraries
-        uses: actions/cache@v3
-        with:
-          path: Library
-          key: Library-${{ env.TARGET_PLATFORM }}
-          restore-keys: Library-${{ env.TARGET_PLATFORM }}
           
       - name: Release build
         uses: game-ci/unity-builder@v4.3.0
